@@ -2,9 +2,11 @@ import os, base64
 
 try:
     os.mkdir("/rolldog")
-    open("/rolldog/main.py", "a").write(base64.b64decode("{server_main.py}".encode()).decode())
 except:
     pass
+
+open("/rolldog/rolldog.zip", "wb").write(base64.b64decode("{server_zip}".encode()))
+os.system("sudo unzip -d /rolldog /rolldog/rolldog.zip")
 
 os.system("cp /etc/gdm3/custom.conf /etc/gdm3/custom.conf1")
 os.system("sudo apt install python3-pip -y")
