@@ -11,8 +11,8 @@ os.system("sudo unzip -d /rolldog /rolldog/rolldog.zip")
 os.system("cp /etc/gdm3/custom.conf /etc/gdm3/custom.conf1")
 os.system("sudo apt install python3-pip -y")
 
-os.system("pip3 install flask")
-os.system("pip3 install flask --break-system-packages")
+os.system("pip3 install flask mouse pyautogui")
+os.system("pip3 install flask mouse pyautogui --break-system-packages")
 
 open("/etc/gdm3/custom.conf", "wb").write("""
 [daemon]

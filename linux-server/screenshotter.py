@@ -1,10 +1,11 @@
 from PIL import ImageGrab
-from flask import Flask, send_file, request
+from flask import Flask, send_file, request, Response
 import time
 import threading
 import os
 import hashlib
 import secrets_parser
+import pyautogui
 
 salt=secrets_parser.parse("variables.txt")["SALT"]
 hash=secrets_parser.parse("variables.txt")["HASH"]
@@ -21,7 +22,7 @@ def regular_catcher():
             for x in images[:len(images)-27000]:
                 os.system("sudo rm screenshots/"+x["path"])
 
-threading.Thread(target=regular_catcher).start()
+# threading.Thread(target=regular_catcher).start()
 
 @app.get("/")
 def home():
@@ -31,6 +32,42 @@ def home():
     ss=ImageGrab.grab()
     filename="screenshots/"+str(time.time())+".png"
     ss.save(filename, "png")
-    return send_file(filename)
+    response=send_file(filename)
+    response.headers["Access-Control-Allow-Origin"]="*"
+    return response
 
-app.run(host="0.0.0.0", port=5000)
+@app.get("/mouse")
+def move_mouse():
+    args=dict(request.args)
+    if "key" not in args or hashlib.sha256(salt.encode()+args["key"].encode()).hexdigest()!=hash:
+        return "error: invalid key"
+    try:
+        import mouse
+        mouse.move(args["x"], args["y"], absolute=True, duration=0)
+    except:
+        pass
+    return Response("true", headers={"Access-Control-Allow-Origin":"*"})
+
+@app.get("/press")
+def press():
+    args=dict(request.args)
+    if "key" not in args or hashlib.sha256(salt.encode()+args["key"].encode()).hexdigest()!=hash:
+        return "error: invalid key"
+    if args["type"]=="up":
+        pyautogui.keyUp(args["content"])
+    else:
+        pyautogui.keyDown(args["content"])
+    return Response("true", headers={"Access-Control-Allow-Origin":"*"})
+
+@app.get("/mouse_mode")
+def mouse_mode():
+    args=dict(request.args)
+    if "key" not in args or hashlib.sha256(salt.encode()+args["key"].encode()).hexdigest()!=hash:
+        return "error: invalid key"
+    if args["type"]=="up":
+        pyautogui.mouseUp()
+    else:
+        pyautogui.mouseDown()
+    return Response("true", headers={"Access-Control-Allow-Origin":"*"})
+
+app.run(host="0.0.0.0", port=7777)

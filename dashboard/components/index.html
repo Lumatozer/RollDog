@@ -1,18 +1,52 @@
-<head>
-    
-</head>
-
-<body>
-    <script>
-        var array=Signal("array", Array(1).fill(1))
-        setInterval(()=>{
-            array.setValue(Array(array.Value().length+1).fill(1))
-        }, 1000)
-    </script>
-    
-    <for i and element in array>
-        <div style="border: {i}px solid black;">
-            hi
-        </div>
-    </for>
-</body>
+<style>
+    body {
+        margin: 0;
+    }
+</style>
+<img id="screen" src="https://placehold.co/600x400" style="width: 100vw; height: auto;" draggable="false"></img>
+<script>
+    var resolution=[0,0]
+    async function fetchAndReplaceImage(i) {
+            try {
+                const response = await fetch("http://127.0.0.1:7777?key=Test123@"+"&q="+String(i));
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const blob = await response.blob();
+                const imageUrl = URL.createObjectURL(blob);
+                const imgElement = document.getElementById("screen");
+                const tempImg = new Image();
+                tempImg.src = imageUrl;
+                tempImg.onload = function() {
+                    resolution=[tempImg.width, tempImg.height]
+                };
+                imgElement.src = imageUrl;
+            } catch (error) {
+                console.error('There has been a problem with your fetch operation:', error);
+            }
+    }
+    (async ()=>{
+        var i=0
+        while (true) {
+            i+=1
+            await fetchAndReplaceImage(i)
+        }
+    })()
+    var lastMouse=true
+    document.getElementById("screen").addEventListener("mousemove", ()=>{
+        if (document.getElementById("screen").src!="https://placehold.co/600x400" && lastMouse) {
+            const rect = document.getElementById("screen").getBoundingClientRect();
+            const x = event.clientX - rect.left;
+            const y = event.clientY - rect.top;
+            const widthRatio = resolution[0] / rect.width;
+            const heightRatio = resolution[1] / rect.height;
+            const originalX = Math.round(x * widthRatio);
+            const originalY = Math.round(y * heightRatio);
+            lastMouse=false
+            fetch("http://127.0.0.1:7777/mouse?key=Test123@&x="+String(originalX)+"&y="+String(originalY)).then(()=>{
+                lastMouse=true
+            })
+        }
+    })
+</script>
+<script src="index.js"></script>

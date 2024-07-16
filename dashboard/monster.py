@@ -45,7 +45,6 @@ class Flask(Flask):
         def catch_all(path):
             return send_from_directory("public", path)
     def make_response(self, object):
-        object.render
         if isinstance(object, Render):
             if "MONSTERSIGNALS" in request.cookies:
                 if request.cookies["MONSTERSIGNALS"]!="true":
@@ -295,7 +294,7 @@ def renderTokens(tokens, variables={"env":{}, "variables":{}}):
                     </script>
                     """.replace("{id}", tokens[i+1]["value"])
                 else:
-                    final+=variables["variables"][tokens[i+1]["value"]]+"\n\n"
+                    final+=variables["env"][tokens[i+1]["value"]]+"\n\n"
             i+=2
             continue
         if tokens[i]["type"]=="tag" and tokens[i]["value"] not in ["if", "for", "signal"]:
