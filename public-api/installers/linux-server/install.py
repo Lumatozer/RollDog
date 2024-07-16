@@ -39,7 +39,7 @@ User=root
 Type=simple
 WorkingDirectory=/rolldog
 Environment="DISPLAY=:1"
-ExecStart=sudo -u aludayalu python3 /rolldog/main.py
+ExecStart=sudo -u root python3 /rolldog/main.py
 Restart=always
 
 [Install]

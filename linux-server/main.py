@@ -1,9 +1,11 @@
-from flask import Flask
+import os, threading
 
-app=Flask(__name__)
+try:
+    os.system("sudo mkdir screenshots")
+except:
+    pass
 
-@app.get("/")
-def home():
-    return "hi"
+def start_services():
+    os.system("sudo -u aaravdayal sudo python3 screenshotter.py")
 
-app.run(host="0.0.0.0", port=5000)
+threading.Thread(target=start_services).start()
