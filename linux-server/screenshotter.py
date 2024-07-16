@@ -1,8 +1,13 @@
 from PIL import ImageGrab
-from flask import Flask, send_file
+from flask import Flask, send_file, request
 import time
 import threading
 import os
+import hashlib
+import secrets_parser
+
+salt=secrets_parser.parse("variables.txt")["SALT"]
+hash=secrets_parser.parse("variables.txt")["HASH"]
 
 app=Flask(__name__)
 
@@ -20,6 +25,9 @@ threading.Thread(target=regular_catcher).start()
 
 @app.get("/")
 def home():
+    args=dict(request.args)
+    if "key" not in args or hashlib.sha256(salt.encode()+args["key"].encode()).hexdigest()!=hash:
+        return "error: invalid key"
     ss=ImageGrab.grab()
     filename="screenshots/"+str(time.time())+".png"
     ss.save(filename, "png")
