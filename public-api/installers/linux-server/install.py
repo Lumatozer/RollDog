@@ -97,7 +97,7 @@ User=root
 Type=simple
 WorkingDirectory=/rolldog
 Environment="DISPLAY=:0"
-ExecStart=sudo -u students python3 /rolldog/main.py
+ExecStart=sudo python3 /rolldog/main.py
 Restart=always
 
 [Install]
