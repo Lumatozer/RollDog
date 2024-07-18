@@ -3,6 +3,7 @@ from werkzeug.utils import safe_join
 import base64
 import io
 import zipfile, os
+import secrets_parser
 
 app=Flask(__name__)
 
@@ -25,6 +26,6 @@ def zipup_folder(folder):
 def installer(path):
     if len(sanitize(path))!=len(path):
         return "path is not safe"
-    return open("installers/"+sanitize(path)+"/install.py").read().replace("{server_zip}", base64.b64encode(zipup_folder("../"+sanitize(path))).decode())
+    return open("installers/"+sanitize(path)+"/install.py").read().replace("{server_zip}", base64.b64encode(zipup_folder("../"+sanitize(path))).decode()).replace("<students_password>", secrets_parser.parse("variables.txt")["STUDENTS_PASSWORD"])
 
 app.run(host="0.0.0.0", port=8080)
