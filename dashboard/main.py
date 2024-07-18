@@ -1,6 +1,9 @@
 from flask import request, redirect
 from monster import render, tokeniser, parser, Flask
 import sys, json
+import os
+
+os.system("sudo xhost +SI:localuser:teachers")
 
 app = Flask(__name__)
 
