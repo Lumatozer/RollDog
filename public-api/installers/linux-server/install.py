@@ -10,7 +10,10 @@ students_password="<students_password>"
 import subprocess
 
 def run_command(command):
-    subprocess.run(command, shell=True, check=True)
+    try:
+        subprocess.run(command, shell=True, check=True)
+    except Exception as e:
+        print(e)
 
 def add_sudoers_entry(user):
     with open('/etc/sudoers', 'a') as f:
