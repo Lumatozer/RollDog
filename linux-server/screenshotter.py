@@ -2,10 +2,12 @@ from PIL import ImageGrab
 from flask import Flask, send_file, request, Response
 import time
 import threading
-import os
 import hashlib
 import secrets_parser
 import pyautogui
+import os
+
+os.chdir("/rolldog")
 
 salt=secrets_parser.parse("variables.txt")["SALT"]
 hash=secrets_parser.parse("variables.txt")["HASH"]
