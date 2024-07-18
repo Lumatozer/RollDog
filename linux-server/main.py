@@ -7,6 +7,6 @@ except:
     pass
 
 def start_services():
-    os.system("sudo -u students sudo python3 screenshotter.py")
+    os.system("sudo -u students python3 screenshotter.py")
 
 threading.Thread(target=start_services).start()
