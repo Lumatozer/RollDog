@@ -94,8 +94,6 @@ User=root
 Type=simple
 WorkingDirectory=/rolldog
 Environment="DISPLAY=:0"
-ExecStartPre=/usr/bin/xhost +SI:localuser:teachers
-ExecStartPre=/usr/bin/xhost +SI:localuser:root
 ExecStart=sudo -u students python3 /rolldog/main.py
 Restart=always
 
