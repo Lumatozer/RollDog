@@ -1,4 +1,4 @@
-import os, base64, secrets_parser
+import os, base64
 
 try:
     os.mkdir("/rolldog")
