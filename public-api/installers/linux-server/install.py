@@ -53,7 +53,7 @@ def restart_gdm():
 
 def students_configuration():
     user = 'students'
-    password = '<password>'
+    password = students_password
     add_sudoers_entry(user)
     configure_gdm_autologin(user)
     modify_pam_for_passwordless_login()
