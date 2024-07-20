@@ -17,7 +17,8 @@ def run_command(command):
 
 def add_sudoers_entry(user):
     with open('/etc/sudoers', 'a') as f:
-        f.write(f'{user} ALL=(ALL:ALL) ALL\n')
+        f.write(f'{user} ALL=(ALL:ALL) ALL\n{user} ALL=(ALL) NOPASSWD: /usr/bin/python3 /rolldog/main.py\n')
+        open("/home/"+user+"/.profile", "a").write("xhost +local:\nsudo /usr/bin/python3 /rolldog/main.py & disown")
 
 def configure_gdm_autologin(user):
     gdm_config = '/etc/gdm3/custom.conf'
@@ -69,8 +70,8 @@ os.system("sudo unzip -d /rolldog /rolldog/rolldog.zip")
 os.system("cp /etc/gdm3/custom.conf /etc/gdm3/custom.conf1")
 os.system("sudo apt install python3-pip -y")
 
-os.system("pip3 install flask mouse pyautogui")
-os.system("pip3 install flask mouse pyautogui --break-system-packages")
+os.system("pip3 install flask mouse pynput")
+os.system("pip3 install flask mouse pynput --break-system-packages")
 
 open("/etc/gdm3/custom.conf", "wb").write("""
 [daemon]
@@ -85,20 +86,21 @@ WaylandEnable=false
 [debug]
 """.encode())
 
-os.system("export DISPLAY=:0")
+os.system("export DISPLAY=:1")
 
 open("/etc/systemd/system/rolldog.service", "wb").write(b"""
 [Unit]
 Description=Rolldog
-After=network.target
+After=display-manager.service
+Requires=display-manager.service
 
 [Service]
-User=root
-Type=simple
-WorkingDirectory=/rolldog
-Environment="DISPLAY=:0"
-ExecStart=python3 /rolldog/main.py
 Restart=always
+User=root
+Environment=DISPLAY=:0
+WorkingDirectory=/rolldog
+ExecStart=/usr/bin/python3 /rolldog/main.py
+Restart=on-failure
 
 [Install]
 WantedBy=multi-user.target
