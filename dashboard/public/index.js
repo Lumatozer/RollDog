@@ -73,3 +73,8 @@ document.addEventListener('mouseup', (event) => {
         fetch("{ip}/mouse_mode?key=Test123@&type=up")
     }
 })
+
+document.getElementById("screen").addEventListener("contextmenu", (event)=>{
+    event.preventDefault()
+    fetch("{ip}/right_click?key=Test123@")
+})

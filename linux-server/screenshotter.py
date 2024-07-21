@@ -103,4 +103,12 @@ def mouse_mode():
         pyautogui.mouseDown()
     return Response("true", headers={"Access-Control-Allow-Origin":"*"})
 
+@app.get("/right_click")
+def right_click():
+    args=dict(request.args)
+    if "key" not in args or hashlib.sha256(salt.encode()+args["key"].encode()).hexdigest()!=hash:
+        return "error: invalid key"
+    pyautogui.rightClick()
+    return Response("true", headers={"Access-Control-Allow-Origin":"*"})
+
 app.run(host="0.0.0.0", port=7777)
