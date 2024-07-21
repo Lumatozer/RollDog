@@ -49,9 +49,6 @@ def ensure_correct_permissions(user):
     run_command(f'sudo chown -R {user}:{user} /home/{user}')
     run_command(f'sudo chmod 700 /home/{user}')
 
-def restart_gdm():
-    run_command('sudo systemctl restart gdm')
-
 def students_configuration():
     user = 'students'
     password = students_password
@@ -88,26 +85,4 @@ WaylandEnable=false
 
 os.system("export DISPLAY=:1")
 
-open("/etc/systemd/system/rolldog.service", "wb").write(b"""
-[Unit]
-Description=Rolldog
-After=display-manager.service
-Requires=display-manager.service
-
-[Service]
-Restart=always
-User=root
-Environment=DISPLAY=:0
-WorkingDirectory=/rolldog
-ExecStart=/usr/bin/python3 /rolldog/main.py
-Restart=on-failure
-
-[Install]
-WantedBy=multi-user.target
-"""[1:-1])
-os.system("sudo systemctl daemon-reload")
-os.system("sudo systemctl enable rolldog.service")
-os.system("sudo systemctl start rolldog service")
-os.system("sudo systemctl status rolldog.service")
-
-restart_gdm()
+os.system("reboot")

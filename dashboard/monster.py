@@ -45,6 +45,7 @@ class Flask(Flask):
         def catch_all(path):
             return send_from_directory("public", path)
     def make_response(self, object):
+        object.render
         if isinstance(object, Render):
             if "MONSTERSIGNALS" in request.cookies:
                 if request.cookies["MONSTERSIGNALS"]!="true":
@@ -74,12 +75,15 @@ def set_headers(response, path):
     return response
 
 def render(path, variables={}):
+    tokenise=path.endswith(".html")
     try:
         component=open(path).read()
     except:
         component=open("components/"+path+".html").read()
-    tokens=tokeniser(component)
-    component=renderTokens(parser(tokens=tokens), variables={"env":variables, "variables":{}})
+        tokenise=True
+    if tokenise:
+        tokens=tokeniser(component)
+        component=renderTokens(parser(tokens=tokens), variables={"env":variables, "variables":{}})
     replace_maps={}
     for variable in variables:
         if "{"+variable+"}" in component:
@@ -294,7 +298,7 @@ def renderTokens(tokens, variables={"env":{}, "variables":{}}):
                     </script>
                     """.replace("{id}", tokens[i+1]["value"])
                 else:
-                    final+=variables["env"][tokens[i+1]["value"]]+"\n\n"
+                    final+=variables["variables"][tokens[i+1]["value"]]+"\n\n"
             i+=2
             continue
         if tokens[i]["type"]=="tag" and tokens[i]["value"] not in ["if", "for", "signal"]:
@@ -427,12 +431,19 @@ def renderTokens(tokens, variables={"env":{}, "variables":{}}):
                 newVariables=variables
                 newVariables["variables"][list(tokens[i]["attributes"])[0]]=IndexUUID
                 encodedHTML=escapeString(renderTokens(tokens[i]["children"], newVariables))
+                indexVariable=list(tokens[i]["attributes"].keys())[0]
+                elementVariable=""
             if len(tokens[i]["attributes"])==5:
                 arrayIndex=4
                 newVariables=variables
                 newVariables["variables"][list(tokens[i]["attributes"])[0]]=IndexUUID
                 newVariables["variables"][list(tokens[i]["attributes"])[2]]=ElementUUID
                 encodedHTML=escapeString(renderTokens(tokens[i]["children"], newVariables))
+                indexVariable=list(tokens[i]["attributes"].keys())[0]
+                elementVariable=list(tokens[i]["attributes"].keys())[2]
+            variableDefinition=f"var {indexVariable}=${{i}}"
+            if elementVariable!="":
+                variableDefinition+=f"; var {elementVariable}=${{array[i]}}"
             script=f"""
                 var signal=false
                 if (array.Value!==undefined) {{
@@ -447,7 +458,7 @@ def renderTokens(tokens, variables={"env":{}, "variables":{}}):
                     if (typeof arrayElement!=="string") {{
                         arrayElement=JSON.stringify(arrayElement)
                     }}
-                    innerHTML+=`<script`+`>var {list(tokens[i]["attributes"].keys())[0]}=${{i}}<`+`/script>`+encodedHTML.replace("{ElementUUID}", arrayElement).replace("{IndexUUID}", String(i))
+                    innerHTML+=`<script`+`>{variableDefinition}<`+`/script>`+encodedHTML.replace("{ElementUUID}", arrayElement).replace("{IndexUUID}", String(i))
                 }}
                 element.innerHTML=innerHTML
                 document.currentScript.insertAdjacentElement("afterend", element)
@@ -469,7 +480,7 @@ def renderTokens(tokens, variables={"env":{}, "variables":{}}):
                         var newElement=document.createElement("div")
                         var innerHTML=""
                         for (var i=0; i<array.length; i++) {{
-                            innerHTML+=`<script`+`>var {list(tokens[i]["attributes"].keys())[0]}=${{i}}<`+`/script>`+encodedHTML.replace("{ElementUUID}", arrayElement).replace("{IndexUUID}", String(i))
+                            innerHTML+=`<script`+`>{variableDefinition}<`+`/script>`+encodedHTML.replace("{ElementUUID}", arrayElement).replace("{IndexUUID}", String(i))
                         }}
                         newElement.innerHTML=innerHTML
                         element.replaceWith(newElement)
