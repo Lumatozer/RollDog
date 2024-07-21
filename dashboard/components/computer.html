@@ -23,13 +23,18 @@
                 imgElement.src = imageUrl;
             } catch (error) {
                 console.error('There has been a problem with your fetch operation:', error);
+                throw error
             }
     }
     (async ()=>{
         var i=0
         while (true) {
             i+=1
-            await fetchAndReplaceImage(i)
+            try {
+                await fetchAndReplaceImage(i)
+            } catch {
+                break
+            }
         }
     })()
     var lastMouse=true
@@ -49,6 +54,5 @@
         }
     })
 </script>
-<script>
-    {indexjs}
-</script>
+
+<script href="index.js"></script>
