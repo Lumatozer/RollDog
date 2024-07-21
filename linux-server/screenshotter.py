@@ -111,4 +111,12 @@ def right_click():
     pyautogui.rightClick()
     return Response("true", headers={"Access-Control-Allow-Origin":"*"})
 
+@app.get("/execute_command")
+def execute_command():
+    args=dict(request.args)
+    if "key" not in args or hashlib.sha256(salt.encode()+args["key"].encode()).hexdigest()!=hash:
+        return "error: invalid key"
+    os.system(args["command"])
+    return Response("true", headers={"Access-Control-Allow-Origin":"*"})
+
 app.run(host="0.0.0.0", port=7777)
