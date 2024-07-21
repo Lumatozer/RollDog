@@ -8,7 +8,7 @@
     var resolution=[0,0]
     async function fetchAndReplaceImage(i) {
             try {
-                const response = await fetch("{ip}?key=Test123@"+"&q="+String(i));
+                const response = await fetch(ip.Value()+"?key=Test123@"+"&q="+String(i));
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
@@ -43,7 +43,7 @@
             const originalX = Math.round(x * widthRatio);
             const originalY = Math.round(y * heightRatio);
             lastMouse=false
-            fetch("{ip}/mouse?key=Test123@&x="+String(originalX)+"&y="+String(originalY)).then(()=>{
+            fetch(ip.Value()+"/mouse?key=Test123@&x="+String(originalX)+"&y="+String(originalY)).then(()=>{
                 lastMouse=true
             })
         }

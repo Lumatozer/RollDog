@@ -39,7 +39,7 @@ document.addEventListener('keydown', (event) => {
     }
     let key = event.key;
     let pyautoguiKey = keyMap[event.code] || key;
-    fetch("{ip}/press?key=Test123@&type=down&content="+pyautoguiKey)
+    fetch(ip.Value()+"/press?key=Test123@&type=down&content="+pyautoguiKey)
 })
 
 document.addEventListener('keyup', (event) => {
@@ -48,7 +48,7 @@ document.addEventListener('keyup', (event) => {
     }
     let key = event.key;
     let pyautoguiKey = keyMap[event.code] || key;
-    fetch("{ip}/press?key=Test123@&type=up&content="+pyautoguiKey)
+    fetch(ip.Value()+"/press?key=Test123@&type=up&content="+pyautoguiKey)
 })
 
 function onScreen(event) {
@@ -64,17 +64,17 @@ function onScreen(event) {
 
 document.addEventListener('mousedown', (event) => {
     if (onScreen(event)) {
-        fetch("{ip}/mouse_mode?key=Test123@&type=down")
+        fetch(ip.Value()+"/mouse_mode?key=Test123@&type=down")
     }
 })
 
 document.addEventListener('mouseup', (event) => {
     if (onScreen(event)) {
-        fetch("{ip}/mouse_mode?key=Test123@&type=up")
+        fetch(ip.Value()+"/mouse_mode?key=Test123@&type=up")
     }
 })
 
 document.getElementById("screen").addEventListener("contextmenu", (event)=>{
     event.preventDefault()
-    fetch("{ip}/right_click?key=Test123@")
+    fetch(ip.Value()+"/right_click?key=Test123@")
 })
