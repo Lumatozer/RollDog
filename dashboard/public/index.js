@@ -36,19 +36,19 @@ for (let i = 1; i <= 12; i++) {
 document.addEventListener('keydown', (event) => {
     let key = event.key;
     let pyautoguiKey = keyMap[event.code] || key;
-    fetch("http://127.0.0.1:7777/press?key=Test123@&type=down&content="+pyautoguiKey)
+    fetch("{ip}/press?key=Test123@&type=down&content="+pyautoguiKey)
 })
 
 document.addEventListener('keyup', (event) => {
     let key = event.key;
     let pyautoguiKey = keyMap[event.code] || key;
-    fetch("http://127.0.0.1:7777/press?key=Test123@&type=up&content="+pyautoguiKey)
+    fetch("{ip}/press?key=Test123@&type=up&content="+pyautoguiKey)
 })
 
 document.addEventListener('mousedown', (event) => {
-    fetch("http://127.0.0.1:7777/mouse_mode?key=Test123@&type=down")
+    fetch("{ip}/mouse_mode?key=Test123@&type=down")
 });
 
 document.addEventListener('mouseup', (event) => {
-    fetch("http://127.0.0.1:7777/mouse_mode?key=Test123@&type=up")
+    fetch("{ip}/mouse_mode?key=Test123@&type=up")
 });

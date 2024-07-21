@@ -8,8 +8,8 @@ app = Flask(__name__)
 @app.get("/")
 def home():
     signals=open("public/signals.js").read()
-    indexjs=open("public/index.js").read()
-    ip="127.0.0.1:7777"
+    ip="http://127.0.0.1:1234"
+    indexjs=render("public/index.js", locals())
     return render("index", locals())
 
 app.run(host="0.0.0.0", port=int(sys.argv[1]))
