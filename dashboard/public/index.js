@@ -34,21 +34,42 @@ for (let i = 1; i <= 12; i++) {
 }
 
 document.addEventListener('keydown', (event) => {
+    if (event.code === 'Space') {
+        event.preventDefault()
+    }
     let key = event.key;
     let pyautoguiKey = keyMap[event.code] || key;
     fetch("{ip}/press?key=Test123@&type=down&content="+pyautoguiKey)
 })
 
 document.addEventListener('keyup', (event) => {
+    if (event.code === 'Space') {
+        event.preventDefault()
+    }
     let key = event.key;
     let pyautoguiKey = keyMap[event.code] || key;
     fetch("{ip}/press?key=Test123@&type=up&content="+pyautoguiKey)
 })
 
+function onScreen(event) {
+    const rect = document.getElementById("screen").getBoundingClientRect();
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
+    const widthRatio = resolution[0] / rect.width;
+    const heightRatio = resolution[1] / rect.height;
+    const originalX = Math.round(x * widthRatio);
+    const originalY = Math.round(y * heightRatio);
+    return originalX>=0 && originalY>=0
+}
+
 document.addEventListener('mousedown', (event) => {
-    fetch("{ip}/mouse_mode?key=Test123@&type=down")
-});
+    if (onScreen(event)) {
+        fetch("{ip}/mouse_mode?key=Test123@&type=down")
+    }
+})
 
 document.addEventListener('mouseup', (event) => {
-    fetch("{ip}/mouse_mode?key=Test123@&type=up")
-});
+    if (onScreen(event)) {
+        fetch("{ip}/mouse_mode?key=Test123@&type=up")
+    }
+})
