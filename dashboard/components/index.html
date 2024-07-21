@@ -1,0 +1,138 @@
+<head>
+    <meta charset="UTF-8"></meta>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"></meta>
+    <style>{maincss}</style>
+    <title>RollDog</title>
+</head>
+
+<script>{tailwind}</script>
+
+<script>
+    const overlay = Signal("overlay", "home")
+    const dropdown = Signal("dropdown", "close")
+    const dropdownValue = Signal("dropdownValue", "1")
+    const powerActive = Signal("powerActive", false)
+    const controlsActive = Signal("controlsActive", false)
+
+    const currentIp = Signal("currentIp", -1)
+
+    DerivedFrom("powerActiveValue", () => {
+        return powerActive.Value() === false ? "bg-white/[0.07]" : "bg-[#2977F5]"
+    }, ["powerActive"])
+    DerivedFrom("controlsActiveValue", () => {
+        return controlsActive.Value() === false ? "bg-white/[0.07]" : "bg-[#2977F5]"
+    }, ["controlsActive"])
+    
+    const ip = DerivedFrom("ip", () => {
+        return "http://" + ips[dropdownValue.Value()][currentIp.Value()] + ":7777"
+    }, ["currentIp", "dropdownValue"])
+
+    function toggleDropdown(){
+        dropdown.setValue(dropdown.Value() === "close" ? "open" : "close")
+        console.log(dropdown.Value())
+    }
+
+    const ips = {"1": ["192.168.22.421", "192.168.22.421", "192.168.22.421", "192.168.22.421"]}
+
+</script>
+
+<body class="bg-[#0c0c0c]">
+
+    <if "overlay.Value() == 'login'" dep:overlay>
+        <div class="h-full w-full flex flex-col justify-center items-center gap-10">
+            <div class="w-fit flex flex-col items-center gap-5">
+                <h1 class="text-5xl font-bold mb-10">Welcome to RollDog</h1>
+                <input 
+                    type="text" 
+                    class="w-full bg-white/[0.07] rounded-lg py-1.5 px-3 transition border-2 border-white/[0.07] focus:outline-none focus:border-white/20 placeholder:text-white/30"
+                    placeholder="Enter Username"></input>
+                <input 
+                    type="text" 
+                    type="password"
+                    class="w-full bg-white/[0.07] rounded-lg py-1.5 px-3 transition border-2 border-white/[0.07] focus:outline-none focus:border-white/20 placeholder:text-white/30"
+                    placeholder="Enter Password"></input>
+                <button class="bg-[#2977F5] w-fit px-20 py-2 rounded-lg mt-10 font-lg font-bold">Login</button>
+            </div>
+        </div>
+    </if>
+    <if "overlay.Value() == 'home'" dep:overlay>
+        <div class="p-4 box-border">
+            <div class="bg-white/10 w-full box-border rounded-lg border border-white/10 px-5 py-2.5 flex flex-row justify-between items-center">
+                <div class="flex gap-2">
+                    <img src="dogface.svg" alt="Dog" class="w-7"></img>
+                    <p class="text-lg font-semibold">RollDog</p>
+                </div>
+
+                <div class="flex gap-8 items-center">
+
+                    <div class="flex gap-0.5 justify-center items-center {controlsActiveValue} p-2 rounded-lg transition" onclick="controlsActive.setValue(!controlsActive.Value())">
+                        <svg width="22px" height="22px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 9V3M12 3C15.3137 3 18 5.68629 18 9V15C18 18.3137 15.3137 21 12 21C8.68629 21 6 18.3137 6 15V9C6 5.68629 8.68629 3 12 3Z" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                        </svg>
+                        <svg width="26px" height="26px" viewBox="0 0 50.8 50.8" xmlns="http://www.w3.org/2000/svg" xml:space="preserve">
+                            <path d="M15.478 32.28h19.844" style="display:inline;fill:#fff;fill-opacity:1;stroke:#fff;stroke-width:3.175;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:5;stroke-dasharray:none;stroke-opacity:1"></path>
+                            <circle cx="11.642" cy="19.579" r="2.117" style="display:inline;fill:#fff;fill-opacity:1;stroke:none;stroke-width:1.00012;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:5;stroke-dasharray:none;stroke-opacity:1"></circle>
+                            <circle cx="18.521" cy="19.579" r="2.117" style="display:inline;fill:#fff;fill-opacity:1;stroke:none;stroke-width:1.00012;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:5;stroke-dasharray:none;stroke-opacity:1"></circle>
+                            <circle cx="25.4" cy="19.579" r="2.117" style="display:inline;fill:#fff;fill-opacity:1;stroke:none;stroke-width:1.00012;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:5;stroke-dasharray:none;stroke-opacity:1"></circle>
+                            <circle cx="32.279" cy="19.579" r="2.117" style="display:inline;fill:#fff;fill-opacity:1;stroke:none;stroke-width:1.00012;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:5;stroke-dasharray:none;stroke-opacity:1"></circle>
+                            <circle cx="39.158" cy="19.579" r="2.117" style="display:inline;fill:#fff;fill-opacity:1;stroke:none;stroke-width:1.00012;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:5;stroke-dasharray:none;stroke-opacity:1"></circle>
+                            <circle cx="11.642" cy="26.458" r="2.117" style="display:inline;fill:#fff;fill-opacity:1;stroke:none;stroke-width:1.00012;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:5;stroke-dasharray:none;stroke-opacity:1"></circle>
+                            <circle cx="18.521" cy="26.458" r="2.117" style="display:inline;fill:#fff;fill-opacity:1;stroke:none;stroke-width:1.00012;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:5;stroke-dasharray:none;stroke-opacity:1"></circle>
+                            <circle cx="25.4" cy="26.458" r="2.117" style="display:inline;fill:#fff;fill-opacity:1;stroke:none;stroke-width:1.00012;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:5;stroke-dasharray:none;stroke-opacity:1"></circle>
+                            <circle cx="32.279" cy="26.458" r="2.117" style="display:inline;fill:#fff;fill-opacity:1;stroke:none;stroke-width:1.00012;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:5;stroke-dasharray:none;stroke-opacity:1"></circle>
+                            <circle cx="39.158" cy="26.458" r="2.117" style="display:inline;fill:#fff;fill-opacity:1;stroke:none;stroke-width:1.00012;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:5;stroke-dasharray:none;stroke-opacity:1"></circle>
+                            <rect width="39.158" height="23.283" x="5.821" y="13.758" rx="1.468" ry="1.397" style="display:inline;fill:none;fill-opacity:1;stroke:#fff;stroke-width:3.175;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:5;stroke-dasharray:none;stroke-opacity:1"></rect>
+                        </svg>
+                    </div>
+
+                    <div class="flex gap-1 justify-center items-center {powerActiveValue} p-2 rounded-lg transition" onclick="powerActive.setValue(!powerActive.Value())">
+                        <svg width="24px" height="24px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 3V12M18.3611 5.64001C19.6195 6.8988 20.4764 8.50246 20.8234 10.2482C21.1704 11.994 20.992 13.8034 20.3107 15.4478C19.6295 17.0921 18.4759 18.4976 16.9959 19.4864C15.5159 20.4752 13.776 21.0029 11.9961 21.0029C10.2162 21.0029 8.47625 20.4752 6.99627 19.4864C5.51629 18.4976 4.36274 17.0921 3.68146 15.4478C3.00019 13.8034 2.82179 11.994 3.16882 10.2482C3.51584 8.50246 4.37272 6.8988 5.6311 5.64001" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                        </svg>
+                    </div>
+
+                    <div class="relative">
+                        <button onclick="toggleDropdown()" class="flex gap-3 justify-between items-center bg-[#2977F5] hover:bg-[#2365cf] w-32 px-3 py-2 rounded-lg text-sm font-semibold focus:outline-none">
+                            <p>Lab {dropdownValue}</p>
+                            <svg class="w-2.5 h-2.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"></path>
+                            </svg>
+                        </button>
+                        
+                        <if "dropdown.Value() == 'open'" dep:dropdown>
+                            <div class="z-10 absolute top-10 bg-white rounded-lg shadow w-32">
+                                <div class="py-2 flex flex-col">
+                                    <p onclick="dropdownValue.setValue(`1`);toggleDropdown()" class="text-black hover:bg-black/10 py-0.5 px-2 cursor-pointer">Lab 1</p>
+                                    <p onclick="dropdownValue.setValue(`2`);toggleDropdown()" class="text-black hover:bg-black/10 py-0.5 px-2 cursor-pointer">Lab 2</p>
+                                    <p onclick="dropdownValue.setValue(`3`);toggleDropdown()" class="text-black hover:bg-black/10 py-0.5 px-2 cursor-pointer">Lab 3</p>
+                                    <p onclick="dropdownValue.setValue(`4`);toggleDropdown()" class="text-black hover:bg-black/10 py-0.5 px-2 cursor-pointer">Lab 4</p>
+                                    <p onclick="dropdownValue.setValue(`5`);toggleDropdown()" class="text-black hover:bg-black/10 py-0.5 px-2 cursor-pointer">Lab 5</p>
+                                </div>
+                            </div>
+                        </if>
+                    </div>
+                </div>
+    
+            </div>
+
+            <if "currentIp.Value() >= 0" dep:currentIp>
+                Hellio
+                {computer}
+            </if>
+            <if "currentIp.Value() === -1" dep:currentIp>
+                <div class="mt-10 flex flex-wrap w-full gap-10">
+
+                    <for i in ips[dropdownValue.Value()]>
+    
+                        <div class="w-[220px] bg-white/10 rounded-lg overflow-hidden cursor-pointer" onclick="currentIp.setValue(0)">
+                            <img src="https://placehold.co/600x400" alt=""></img>
+                            <p class="m-2 text-center">{i}</p>
+                        </div>
+
+                    </for>
+    
+                </div>  
+            </if>
+        </div>
+    </if>
+</body>

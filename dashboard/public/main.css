@@ -1,9 +1,37 @@
+body,
+html {
+  background-color: #0c0c0c;
+  color: #fff;
+}
+
 .wrapper {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .vertical {
-    text-align: center;
+  text-align: center;
+}
+
+body::-webkit-scrollbar,
+html::-webkit-scrollbar {
+  width: 10px;
+}
+
+body::-webkit-scrollbar-track,
+html::-webkit-scrollbar-track {
+  border-radius: 10px;
+  border: 0.5px solid rgba(255, 255, 255, 0.1);
+}
+
+body::-webkit-scrollbar-thumb,
+html::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+}
+
+body::-webkit-scrollbar-thumb:hover,
+html::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
 }
