@@ -17,6 +17,14 @@
 
     const currentIp = Signal("currentIp", -1)
 
+    DerivedFrom("labIps", ()=>{
+        if (ips[dropdownValue.Value()]!==undefined) {
+            return ips[dropdownValue.Value()]
+        } else {
+            return []
+        }
+    }, ["dropdownValue"])
+
     DerivedFrom("powerActiveValue", () => {
         return powerActive.Value() === false ? "bg-white/[0.07]" : "bg-[#2977F5]"
     }, ["powerActive"])
@@ -118,7 +126,7 @@
                 {computer}
             </if>
             <if "currentIp.Value() === -1" dep:currentIp>
-                    <for _ and address in ips[dropdownValue.Value()] class="mt-10 flex flex-wrap w-full gap-10">
+                    <for _ and address in labIps class="mt-10 flex flex-wrap w-full gap-10">
                         <div class="w-[220px] bg-white/10 rounded-lg overflow-hidden cursor-pointer" onclick="currentIp.setValue(0)">
                             <script>
                                 var image=document.currentScript.nextElementSibling;
