@@ -8,11 +8,12 @@
 <script>{tailwind}</script>
 
 <script>
-    const overlay = Signal("overlay", "home")
+    const overlay = Signal("overlay", "login")
     const dropdown = Signal("dropdown", "close")
     const dropdownValue = Signal("dropdownValue", "1")
     const powerActive = Signal("powerActive", false)
     const controlsActive = Signal("controlsActive", false)
+    const password = Signal("password", undefined)
 
     const currentIp = Signal("currentIp", -1)
 
@@ -44,14 +45,12 @@
                 <h1 class="text-5xl font-bold mb-10">Welcome to RollDog</h1>
                 <input 
                     type="text" 
-                    class="w-full bg-white/[0.07] rounded-lg py-1.5 px-3 transition border-2 border-white/[0.07] focus:outline-none focus:border-white/20 placeholder:text-white/30"
-                    placeholder="Enter Username"></input>
-                <input 
-                    type="text" 
                     type="password"
                     class="w-full bg-white/[0.07] rounded-lg py-1.5 px-3 transition border-2 border-white/[0.07] focus:outline-none focus:border-white/20 placeholder:text-white/30"
-                    placeholder="Enter Password"></input>
-                <button class="bg-[#2977F5] w-fit px-20 py-2 rounded-lg mt-10 font-lg font-bold">Login</button>
+                    placeholder="Enter Password"
+                    id="password"
+                ></input>
+                <button class="bg-[#2977F5] w-fit px-20 py-2 rounded-lg mt-10 font-lg font-bold" id="loginbutton">Login</button>
             </div>
         </div>
     </if>
@@ -145,7 +144,7 @@
                                         if (document.contains(image)) {
                                             j++
                                             try {
-                                                fetchImageAsBase64("http://"+localAddress+":7777?key=Test123@&j="+String(j))
+                                                fetchImageAsBase64("http://"+localAddress+":7777?key="+password.Value()+"&j="+String(j))
                                             } catch {}
                                             await new Promise(r => setTimeout(r, 10000))
                                         } else {
@@ -162,3 +161,18 @@
         </div>
     </if>
 </body>
+<script>
+    document.getElementById("loginbutton").addEventListener("click", async ()=>{
+        async function sha256(message) {
+            const msgBuffer = new TextEncoder().encode(message);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));                
+            const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+            return hashHex;
+        }
+        if ((await sha256(document.getElementById("password").value))==="41802b211091917c6d9c9cb1e70707766fa8febe2271b18a7eca404829c9a3f0") {
+            password.setValue(document.getElementById("password").value)
+            overlay.setValue("home")
+        }
+    })
+</script>
