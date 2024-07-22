@@ -34,21 +34,25 @@ for (let i = 1; i <= 12; i++) {
 }
 
 document.addEventListener('keydown', (event) => {
-    if (event.code === 'Space') {
-        event.preventDefault()
+    if (controlsActive.Value()) {
+        if (event.code === 'Space') {
+            event.preventDefault()
+        }
+        let key = event.key;
+        let pyautoguiKey = keyMap[event.code] || key;
+        fetch(ip.Value()+"/press?key=Test123@&type=down&content="+pyautoguiKey)
     }
-    let key = event.key;
-    let pyautoguiKey = keyMap[event.code] || key;
-    fetch(ip.Value()+"/press?key=Test123@&type=down&content="+pyautoguiKey)
 })
 
 document.addEventListener('keyup', (event) => {
-    if (event.code === 'Space') {
-        event.preventDefault()
+    if (controlsActive.Value()) {
+        if (event.code === 'Space') {
+            event.preventDefault()
+        }
+        let key = event.key;
+        let pyautoguiKey = keyMap[event.code] || key;
+        fetch(ip.Value()+"/press?key=Test123@&type=up&content="+pyautoguiKey)
     }
-    let key = event.key;
-    let pyautoguiKey = keyMap[event.code] || key;
-    fetch(ip.Value()+"/press?key=Test123@&type=up&content="+pyautoguiKey)
 })
 
 function onScreen(event) {
@@ -63,18 +67,20 @@ function onScreen(event) {
 }
 
 document.addEventListener('mousedown', (event) => {
-    if (onScreen(event)) {
+    if (onScreen(event) && controlsActive.Value()) {
         fetch(ip.Value()+"/mouse_mode?key=Test123@&type=down")
     }
 })
 
 document.addEventListener('mouseup', (event) => {
-    if (onScreen(event)) {
+    if (onScreen(event) && controlsActive.Value()) {
         fetch(ip.Value()+"/mouse_mode?key=Test123@&type=up")
     }
 })
 
 document.getElementById("screen").addEventListener("contextmenu", (event)=>{
     event.preventDefault()
-    fetch(ip.Value()+"/right_click?key=Test123@")
+    if (controlsActive.Value()) {
+        fetch(ip.Value()+"/right_click?key=Test123@")
+    }
 })

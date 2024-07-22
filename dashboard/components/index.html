@@ -58,7 +58,7 @@
     <if "overlay.Value() == 'home'" dep:overlay>
         <div class="p-4 box-border">
             <div class="bg-white/10 w-full box-border rounded-lg border border-white/10 px-5 py-2.5 flex flex-row justify-between items-center">
-                <div class="flex gap-2">
+                <div class="flex gap-2" style="cursor: pointer;" onclick="currentIp.setValue(-1)">
                     <img src="dogface.svg" alt="Dog" class="w-7"></img>
                     <p class="text-lg font-semibold">RollDog</p>
                 </div>

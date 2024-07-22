@@ -39,6 +39,9 @@
     })()
     var lastMouse=true
     document.getElementById("screen").addEventListener("mousemove", ()=>{
+        if (!controlsActive.Value()) {
+            return
+        }
         if (document.getElementById("screen").src!="https://placehold.co/600x400" && lastMouse) {
             const rect = document.getElementById("screen").getBoundingClientRect();
             const x = event.clientX - rect.left;
