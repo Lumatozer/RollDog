@@ -119,18 +119,12 @@
                 {computer}
             </if>
             <if "currentIp.Value() === -1" dep:currentIp>
-                <div class="mt-10 flex flex-wrap w-full gap-10">
-
-                    <for _ and ip in ips[dropdownValue.Value()]>
-    
+                    <for _ and ip in ips[dropdownValue.Value()] class="mt-10 flex flex-wrap w-full gap-10">
                         <div class="w-[220px] bg-white/10 rounded-lg overflow-hidden cursor-pointer" onclick="currentIp.setValue(0)">
                             <img src="https://placehold.co/600x400" alt=""></img>
                             <p class="m-2 text-center">{ip}</p>
                         </div>
-
                     </for>
-    
-                </div>  
             </if>
         </div>
     </if>
