@@ -33,7 +33,7 @@
     }, ["controlsActive"])
     
     const ip = DerivedFrom("ip", () => {
-        return "http://" + ips[dropdownValue.Value()][currentIp.Value()] + ":1234"
+        return "http://" + ips[dropdownValue.Value()][currentIp.Value()] + ":7777"
     }, ["currentIp", "dropdownValue"])
 
     function toggleDropdown(){
@@ -41,7 +41,7 @@
         console.log(dropdown.Value())
     }
 
-    const ips = {"1": ["127.0.0.1", "192.168.22.42", "192.168.22.42", "192.168.22.42", "192.168.22.42"]}
+    const ips = {"1": ["192.168.2.112"]}
 
 </script>
 
