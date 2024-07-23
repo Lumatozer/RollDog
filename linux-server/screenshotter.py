@@ -7,6 +7,8 @@ import secrets_parser
 import os
 import subprocess
 
+from PIL import ImageGrab
+
 import pyautogui
 import logging
 
@@ -56,12 +58,6 @@ def home():
     filename="screenshots/"+str(time.time())+".png"
     data=""
     try:
-        from PIL import ImageGrab
-        attempt(lambda:ImageGrab.grab(xdisplay="0").save(filename, "png"))
-        attempt(lambda:ImageGrab.grab(xdisplay="1").save(filename, "png"))
-        attempt(lambda:ImageGrab.grab(xdisplay=":0").save(filename, "png"))
-        attempt(lambda:ImageGrab.grab(xdisplay=":1").save(filename, "png"))
-        attempt(lambda:os.system("xwd -root -out /tmp/hi.xwd"))
         ImageGrab.grab(xdisplay=":1").save(filename, "png")
     except Exception as e:
         logging.exception("Exception:\n"+str(e))

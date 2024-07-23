@@ -1,3 +1,56 @@
+var resolution=[0,0]
+    async function fetchAndReplaceImage(i) {
+            try {
+                const response = await fetch(ip.Value()+"?key="+password.Value()+"&q="+String(i));
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const blob = await response.blob();
+                const imageUrl = URL.createObjectURL(blob);
+                const imgElement = document.getElementById("screen");
+                const tempImg = new Image();
+                tempImg.src = imageUrl;
+                tempImg.onload = function() {
+                    resolution=[tempImg.width, tempImg.height]
+                };
+                imgElement.src = imageUrl;
+            } catch (error) {
+                console.error('There has been a problem with your fetch operation:', error);
+                throw error
+            }
+    }
+    (async ()=>{
+        var i=0
+        while (true) {
+            i+=1
+            try {
+                await fetchAndReplaceImage(i)
+            } catch {
+                break
+            }
+        }
+    })()
+    var lastMouse=true
+    document.getElementById("screen").addEventListener("mousemove", ()=>{
+        if (!controlsActive.Value()) {
+            return
+        }
+        if (document.getElementById("screen").src!="https://placehold.co/600x400" && lastMouse) {
+            const rect = document.getElementById("screen").getBoundingClientRect();
+            const x = event.clientX - rect.left;
+            const y = event.clientY - rect.top;
+            const widthRatio = resolution[0] / rect.width;
+            const heightRatio = resolution[1] / rect.height;
+            const originalX = Math.round(x * widthRatio);
+            const originalY = Math.round(y * heightRatio);
+            lastMouse=false
+            fetch(ip.Value()+"/mouse?key="+password.Value()+"&x="+String(originalX)+"&y="+String(originalY)).then(async ()=>{
+                await new Promise(r => setTimeout(r, 100))
+                lastMouse=true
+            })
+        }
+    })
+
 const keyMap = {
     'Backspace': 'backspace',
     'Tab': 'tab',

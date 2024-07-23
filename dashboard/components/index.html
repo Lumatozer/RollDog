@@ -129,36 +129,38 @@
                     <for _ and address in labIps class="mt-10 flex flex-wrap w-full gap-10">
                         <div class="w-[220px] bg-white/10 rounded-lg overflow-hidden cursor-pointer" onclick="currentIp.setValue(0)">
                             <script>
-                                var image=document.currentScript.nextElementSibling;
-                                (async ()=>{
-                                    console.log(address, image)
-                                    var localAddress=address
-                                    var j=0
-                                    async function fetchImageAsBase64(imageUrl) {
-                                        try {
-                                            const response = await fetch(imageUrl);
-                                            const blob = await response.blob();
-                                            const reader = new FileReader();
-                                            reader.onloadend = function() {
-                                                const base64String = reader.result;
-                                                document.currentScript.nextElementSibling.src = base64String;
-                                            };
-                                            reader.readAsDataURL(blob);
-                                        } catch (error) {
-                                            console.error('Error fetching image:', error);
-                                        }
-                                    }
-                                    while (true) {
-                                        if (document.contains(image)) {
-                                            j++
+                                (()=>{
+                                    var image=document.currentScript.nextElementSibling;
+                                    (async ()=>{
+                                        console.log(address, image)
+                                        var localAddress=address
+                                        var j=0
+                                        async function fetchImageAsBase64(imageUrl) {
                                             try {
-                                                fetchImageAsBase64("http://"+localAddress+":7777?key="+password.Value()+"&j="+String(j))
-                                            } catch {}
-                                            await new Promise(r => setTimeout(r, 10000))
-                                        } else {
-                                            break
+                                                const response = await fetch(imageUrl);
+                                                const blob = await response.blob();
+                                                const reader = new FileReader();
+                                                reader.onloadend = function() {
+                                                    const base64String = reader.result;
+                                                    image.src = base64String;
+                                                };
+                                                reader.readAsDataURL(blob);
+                                            } catch (error) {
+                                                console.error('Error fetching image:', error);
+                                            }
                                         }
-                                    }
+                                        while (true) {
+                                            if (document.contains(image)) {
+                                                j++
+                                                try {
+                                                    fetchImageAsBase64("http://"+localAddress+":7777?key="+password.Value()+"&j="+String(j))
+                                                } catch {}
+                                                await new Promise(r => setTimeout(r, 10000))
+                                            } else {
+                                                break
+                                            }
+                                        }
+                                    })()
                                 })()
                             </script>
                             <img src="https://placehold.co/600x400" alt=""></img>
