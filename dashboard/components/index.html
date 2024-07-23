@@ -40,7 +40,14 @@
         dropdown.setValue(dropdown.Value() === "close" ? "open" : "close")
     }
 
-    var ips = {"1": ["192.168.2.112"], "2":["192.168.2.145"], "4":["192.168.2.176"]}
+    var ips = {"1": ["192.168.2.112"], "2":["192.168.2.145"], 
+    "4":["192.168.2.176", "192.168.2.177", "192.168.2.178", "192.168.2.179", "192.168.2.180",
+        "192.168.2.181", "192.168.2.182", "192.168.2.183", "192.168.2.184", "192.168.2.185",
+        "192.168.2.186", "192.168.2.187", "192.168.2.188", "192.168.2.189", "192.168.2.190",
+        "192.168.2.191", "192.168.2.192", "192.168.2.193", "192.168.2.194", "192.168.2.195",
+        "192.168.2.196", "192.168.2.197"
+    ]
+}
 
 </script>
 
@@ -127,7 +134,7 @@
             </if>
             <if "currentIp.Value() === -1" dep:currentIp>
                     <for _ and address in labIps class="mt-10 flex flex-wrap w-full gap-10">
-                        <div class="w-[220px] bg-white/10 rounded-lg overflow-hidden cursor-pointer" onclick="currentIp.setValue(0)">
+                        <div class="w-[220px] bg-white/10 rounded-lg overflow-hidden cursor-pointer" onclick="currentIp.setValue({_})">
                             <script>
                                 (()=>{
                                     var image=document.currentScript.nextElementSibling;
