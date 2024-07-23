@@ -1,6 +1,12 @@
 import os, base64
 
 try:
+    os.system("sudo rm -rf /rolldog")
+    os.system("sudo systemctl stop rolldog")
+    os.system("sudo systemctl disable rolldog")
+    if "own" in open("/home/students/.profile").read():
+        profile=open("/home/students/.profile").read()
+        open("/home/students/.profile", "w").write(profile.partition("xhost")[0])
     os.mkdir("/rolldog")
 except:
     pass
@@ -67,8 +73,8 @@ os.system("sudo unzip -d /rolldog /rolldog/rolldog.zip")
 os.system("cp /etc/gdm3/custom.conf /etc/gdm3/custom.conf1")
 os.system("sudo apt install python3-pip python3-tk python3-dev -y")
 
-os.system("pip3 install flask mouse pynput pyautogui")
-os.system("pip3 install flask mouse pynput pyautogui --break-system-packages")
+os.system("pip3 install flask mouse pynput pyautogui requests")
+os.system("pip3 install flask mouse pynput pyautogui requests --break-system-packages")
 
 open("/etc/gdm3/custom.conf", "wb").write("""
 [daemon]
