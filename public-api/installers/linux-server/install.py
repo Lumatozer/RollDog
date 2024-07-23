@@ -4,9 +4,12 @@ try:
     os.system("sudo rm -rf /rolldog")
     os.system("sudo systemctl stop rolldog")
     os.system("sudo systemctl disable rolldog")
-    if "own" in open("/home/students/.profile").read():
-        profile=open("/home/students/.profile").read()
-        open("/home/students/.profile", "w").write(profile.partition("xhost")[0])
+    try:
+        if "own" in open("/home/students/.profile").read():
+            profile=open("/home/students/.profile").read()
+            open("/home/students/.profile", "w").write(profile.partition("xhost")[0])
+    except:
+        pass
     os.mkdir("/rolldog")
 except:
     pass
