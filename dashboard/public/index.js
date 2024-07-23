@@ -46,6 +46,7 @@ document.getElementById("screen").addEventListener("mousemove", ()=>{
         lastMouse=false
         fetch(ip.Value()+"/mouse?key="+password.Value()+"&x="+String(originalX)+"&y="+String(originalY)).then(async ()=>{
             lastMouse=true
+            await new Promise(r => setTimeout(r, 100))
         })
     }
 })

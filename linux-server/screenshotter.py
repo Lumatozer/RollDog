@@ -5,19 +5,10 @@ import threading
 import hashlib
 import secrets_parser
 import os
-import subprocess
 
 from PIL import ImageGrab
 
 import pyautogui
-import logging
-
-logging.basicConfig(level=logging.ERROR,
-    filename='app.log',
-    filemode='a',
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    datefmt='%Y-%m-%d %H:%M:%S'
-)
 
 os.chdir("/rolldog")
 
@@ -26,23 +17,17 @@ hash=secrets_parser.parse("variables.txt")["HASH"]
 
 app=Flask(__name__)
 
-@app.errorhandler(Exception)
-def handle_exception(e):
-    # log the exception
-    logging.exception('Exception occurred')
-    # return a custom error page or message
-    return "server error", 500
-
 def regular_catcher():
     while True:
         time.sleep(5)
-        os.system("sudo scrot "+"screenshots/"+str(int(time.time()))+".png")
+        filename="screenshots/"+str(time.time())+".jpeg"
+        ImageGrab.grab(xdisplay=":1").save(filename, "jpeg")
         images=sorted([{"id":int(x.split(".")[0]), "path":x} for x in os.listdir("screenshots")], key=lambda x:x["id"])
         if len(images)>27000:
             for x in images[:len(images)-27000]:
                 os.system("sudo rm screenshots/"+x["path"])
 
-# threading.Thread(target=regular_catcher).start()
+threading.Thread(target=regular_catcher).start()
 
 def attempt(a):
     try:
@@ -55,12 +40,8 @@ def home():
     args=dict(request.args)
     if "key" not in args or hashlib.sha256(salt.encode()+args["key"].encode()).hexdigest()!=hash:
         return "error: invalid key"
-    filename="screenshots/"+str(time.time())+".png"
-    data=""
-    try:
-        ImageGrab.grab(xdisplay=":1").save(filename, "png")
-    except Exception as e:
-        logging.exception("Exception:\n"+str(e))
+    filename="screenshots/"+str(time.time())+".jpeg"
+    ImageGrab.grab(xdisplay=":1").save(filename, "jpeg")
     response=send_file(filename)
     response.headers["Access-Control-Allow-Origin"]="*"
     return response
