@@ -1,57 +1,56 @@
 var resolution=[0,0]
-    async function fetchAndReplaceImage(i) {
-            try {
-                const response = await fetch(ip.Value()+"?key="+password.Value()+"&q="+String(i));
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                const blob = await response.blob();
-                const imageUrl = URL.createObjectURL(blob);
-                const imgElement = document.getElementById("screen");
-                const tempImg = new Image();
-                tempImg.src = imageUrl;
-                tempImg.onload = function() {
-                    resolution=[tempImg.width, tempImg.height]
-                };
-                imgElement.src = imageUrl;
-            } catch (error) {
-                console.error('There has been a problem with your fetch operation:', error);
-                throw error
+async function fetchAndReplaceImage(i) {
+        try {
+            var response = await fetch(ip.Value()+"?key="+password.Value()+"&q="+String(i));
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
             }
-    }
-    (async ()=>{
-        var i=0
-        while (true) {
-            i+=1
-            try {
-                await fetchAndReplaceImage(i)
-            } catch {
-                break
-            }
+            var blob = await response.blob();
+            var imageUrl = URL.createObjectURL(blob);
+            var imgElement = document.getElementById("screen");
+            var tempImg = new Image();
+            tempImg.src = imageUrl;
+            tempImg.onload = function() {
+                resolution=[tempImg.width, tempImg.height]
+            };
+            imgElement.src = imageUrl;
+        } catch (error) {
+            throw error
         }
-    })()
-    var lastMouse=true
-    document.getElementById("screen").addEventListener("mousemove", ()=>{
-        if (!controlsActive.Value()) {
-            return
-        }
-        if (document.getElementById("screen").src!="https://placehold.co/600x400" && lastMouse) {
-            const rect = document.getElementById("screen").getBoundingClientRect();
-            const x = event.clientX - rect.left;
-            const y = event.clientY - rect.top;
-            const widthRatio = resolution[0] / rect.width;
-            const heightRatio = resolution[1] / rect.height;
-            const originalX = Math.round(x * widthRatio);
-            const originalY = Math.round(y * heightRatio);
-            lastMouse=false
-            fetch(ip.Value()+"/mouse?key="+password.Value()+"&x="+String(originalX)+"&y="+String(originalY)).then(async ()=>{
-                await new Promise(r => setTimeout(r, 100))
-                lastMouse=true
-            })
-        }
-    })
+}
 
-const keyMap = {
+(async ()=>{
+    var i=0
+    while (true) {
+        i+=1
+        try {
+            await fetchAndReplaceImage(i)
+        } catch {
+            break
+        }
+    }
+})()
+var lastMouse=true
+document.getElementById("screen").addEventListener("mousemove", ()=>{
+    if (!controlsActive.Value()) {
+        return
+    }
+    if (document.getElementById("screen").src!="https://placehold.co/600x400" && lastMouse) {
+        var rect = document.getElementById("screen").getBoundingClientRect();
+        var x = event.clientX - rect.left;
+        var y = event.clientY - rect.top;
+        var widthRatio = resolution[0] / rect.width;
+        var heightRatio = resolution[1] / rect.height;
+        var originalX = Math.round(x * widthRatio);
+        var originalY = Math.round(y * heightRatio);
+        lastMouse=false
+        fetch(ip.Value()+"/mouse?key="+password.Value()+"&x="+String(originalX)+"&y="+String(originalY)).then(async ()=>{
+            lastMouse=true
+        })
+    }
+})
+
+var keyMap = {
     'Backspace': 'backspace',
     'Tab': 'tab',
     'Enter': 'enter',
@@ -109,14 +108,22 @@ document.addEventListener('keyup', (event) => {
 })
 
 function onScreen(event) {
-    const rect = document.getElementById("screen").getBoundingClientRect();
-    const x = event.clientX - rect.left;
-    const y = event.clientY - rect.top;
-    const widthRatio = resolution[0] / rect.width;
-    const heightRatio = resolution[1] / rect.height;
-    const originalX = Math.round(x * widthRatio);
-    const originalY = Math.round(y * heightRatio);
-    return originalX>=0 && originalY>=0
+    var toReturn=false
+    try {
+        var rect = document.getElementById("screen").getBoundingClientRect();
+        var x = event.clientX - rect.left;
+        var y = event.clientY - rect.top;
+        var widthRatio = resolution[0] / rect.width;
+        var heightRatio = resolution[1] / rect.height;
+        var originalX = Math.round(x * widthRatio);
+        var originalY = Math.round(y * heightRatio);
+        return originalX>=0 && originalY>=0
+    } catch {
+        toReturn=true
+    }
+    if (toReturn) {
+        return false
+    }
 }
 
 document.addEventListener('mousedown', (event) => {

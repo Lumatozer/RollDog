@@ -8,14 +8,14 @@
 <script>{tailwind}</script>
 
 <script>
-    const overlay = Signal("overlay", "login")
-    const dropdown = Signal("dropdown", "close")
-    const dropdownValue = Signal("dropdownValue", "1")
-    const powerActive = Signal("powerActive", false)
-    const controlsActive = Signal("controlsActive", false)
-    const password = Signal("password", undefined)
+    var overlay = Signal("overlay", "login")
+    var dropdown = Signal("dropdown", "close")
+    var dropdownValue = Signal("dropdownValue", "1")
+    var powerActive = Signal("powerActive", false)
+    var controlsActive = Signal("controlsActive", false)
+    var password = Signal("password", undefined)
 
-    const currentIp = Signal("currentIp", -1)
+    var currentIp = Signal("currentIp", -1)
 
     DerivedFrom("labIps", ()=>{
         if (ips[dropdownValue.Value()]!==undefined) {
@@ -32,7 +32,7 @@
         return controlsActive.Value() === false ? "bg-white/[0.07]" : "bg-[#2977F5]"
     }, ["controlsActive"])
     
-    const ip = DerivedFrom("ip", () => {
+    var ip = DerivedFrom("ip", () => {
         return "http://" + ips[dropdownValue.Value()][currentIp.Value()] + ":7777"
     }, ["currentIp", "dropdownValue"])
 
@@ -41,7 +41,7 @@
         console.log(dropdown.Value())
     }
 
-    const ips = {"1": ["192.168.2.112"]}
+    var ips = {"1": ["192.168.2.112"], "2":["192.168.2.145"]}
 
 </script>
 
@@ -124,6 +124,7 @@
 
             <if "currentIp.Value() >= 0" dep:currentIp>
                 {computer}
+                <script src="index.js"></script>
             </if>
             <if "currentIp.Value() === -1" dep:currentIp>
                     <for _ and address in labIps class="mt-10 flex flex-wrap w-full gap-10">
@@ -137,11 +138,11 @@
                                         var j=0
                                         async function fetchImageAsBase64(imageUrl) {
                                             try {
-                                                const response = await fetch(imageUrl);
-                                                const blob = await response.blob();
-                                                const reader = new FileReader();
+                                                var response = await fetch(imageUrl);
+                                                var blob = await response.blob();
+                                                var reader = new FileReader();
                                                 reader.onloadend = function() {
-                                                    const base64String = reader.result;
+                                                    var base64String = reader.result;
                                                     image.src = base64String;
                                                 };
                                                 reader.readAsDataURL(blob);
@@ -174,10 +175,10 @@
 <script>
     document.getElementById("loginbutton").addEventListener("click", async ()=>{
         async function sha256(message) {
-            const msgBuffer = new TextEncoder().encode(message);
-            const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
-            const hashArray = Array.from(new Uint8Array(hashBuffer));                
-            const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+            var msgBuffer = new TextEncoder().encode(message);
+            var hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+            var hashArray = Array.from(new Uint8Array(hashBuffer));                
+            var hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
             return hashHex;
         }
         if ((await sha256(document.getElementById("password").value))==="41802b211091917c6d9c9cb1e70707766fa8febe2271b18a7eca404829c9a3f0") {
