@@ -8,10 +8,11 @@
 <script>{tailwind}</script>
 
 <script>
+    const urlParams = new URLSearchParams(window.location.search)
+    var defaultLab = urlParams.get("lab") == null ? 1 : Number(urlParams.get("lab"))
     var overlay = Signal("overlay", "login")
     var dropdown = Signal("dropdown", "close")
-    var dropdownValue = Signal("dropdownValue", "1")
-    var powerActive = Signal("powerActive", false)
+    var dropdownValue = Signal("dropdownValue", String(defaultLab))
     var controlsActive = Signal("controlsActive", false)
     var password = Signal("password", undefined)
 
@@ -25,9 +26,6 @@
         }
     }, ["dropdownValue"])
 
-    DerivedFrom("powerActiveValue", () => {
-        return powerActive.Value() === false ? "bg-white/[0.07]" : "bg-[#2977F5]"
-    }, ["powerActive"])
     DerivedFrom("controlsActiveValue", () => {
         return controlsActive.Value() === false ? "bg-white/[0.07]" : "bg-[#2977F5]"
     }, ["controlsActive"])
@@ -68,6 +66,128 @@
         "192.168.2.216", "192.168.2.217", "192.168.2.218", "192.168.2.219", "192.168.2.220",
         "192.168.2.221"
     ]
+}
+
+var sha256 = function sha256(ascii) {
+    function rightRotate(value, amount) {
+        return (value>>>amount) | (value<<(32 - amount));
+    };
+    
+    var mathPow = Math.pow;
+    var maxWord = mathPow(2, 32);
+    var lengthProperty = 'length'
+    var i, j; // Used as a counter across the whole file
+    var result = ''
+
+    var words = [];
+    var asciiBitLength = ascii[lengthProperty]*8;
+    
+    //* caching results is optional - remove/add slash from front of this line to toggle
+    // Initial hash value: first 32 bits of the fractional parts of the square roots of the first 8 primes
+    // (we actually calculate the first 64, but extra values are just ignored)
+    var hash = sha256.h = sha256.h || [];
+    // Round constants: first 32 bits of the fractional parts of the cube roots of the first 64 primes
+    var k = sha256.k = sha256.k || [];
+    var primeCounter = k[lengthProperty];
+    /*/
+    var hash = [], k = [];
+    var primeCounter = 0;
+    //*/
+
+    var isComposite = {};
+    for (var candidate = 2; primeCounter < 64; candidate++) {
+        if (!isComposite[candidate]) {
+            for (i = 0; i < 313; i += candidate) {
+                isComposite[i] = candidate;
+            }
+            hash[primeCounter] = (mathPow(candidate, .5)*maxWord)|0;
+            k[primeCounter++] = (mathPow(candidate, 1/3)*maxWord)|0;
+        }
+    }
+    
+    ascii += '\x80' // Append Ƈ' bit (plus zero padding)
+    while (ascii[lengthProperty]%64 - 56) ascii += '\x00' // More zero padding
+    for (i = 0; i < ascii[lengthProperty]; i++) {
+        j = ascii.charCodeAt(i);
+        if (j>>8) return; // ASCII check: only accept characters in range 0-255
+        words[i>>2] |= j << ((3 - i)%4)*8;
+    }
+    words[words[lengthProperty]] = ((asciiBitLength/maxWord)|0);
+    words[words[lengthProperty]] = (asciiBitLength)
+    
+    // process each chunk
+    for (j = 0; j < words[lengthProperty];) {
+        var w = words.slice(j, j += 16); // The message is expanded into 64 words as part of the iteration
+        var oldHash = hash;
+        // This is now the undefinedworking hash", often labelled as variables a...g
+        // (we have to truncate as well, otherwise extra entries at the end accumulate
+        hash = hash.slice(0, 8);
+        
+        for (i = 0; i < 64; i++) {
+            var i2 = i + j;
+            // Expand the message into 64 words
+            // Used below if 
+            var w15 = w[i - 15], w2 = w[i - 2];
+
+            // Iterate
+            var a = hash[0], e = hash[4];
+            var temp1 = hash[7]
+                + (rightRotate(e, 6) ^ rightRotate(e, 11) ^ rightRotate(e, 25)) // S1
+                + ((e&hash[5])^((~e)&hash[6])) // ch
+                + k[i]
+                // Expand the message schedule if needed
+                + (w[i] = (i < 16) ? w[i] : (
+                        w[i - 16]
+                        + (rightRotate(w15, 7) ^ rightRotate(w15, 18) ^ (w15>>>3)) // s0
+                        + w[i - 7]
+                        + (rightRotate(w2, 17) ^ rightRotate(w2, 19) ^ (w2>>>10)) // s1
+                    )|0
+                );
+            // This is only used once, so *could* be moved below, but it only saves 4 bytes and makes things unreadble
+            var temp2 = (rightRotate(a, 2) ^ rightRotate(a, 13) ^ rightRotate(a, 22)) // S0
+                + ((a&hash[1])^(a&hash[2])^(hash[1]&hash[2])); // maj
+            
+            hash = [(temp1 + temp2)|0].concat(hash); // We don't bother trimming off the extra ones, they're harmless as long as we're truncating when we do the slice()
+            hash[4] = (hash[4] + temp1)|0;
+        }
+        
+        for (i = 0; i < 8; i++) {
+            hash[i] = (hash[i] + oldHash[i])|0;
+        }
+    }
+    
+    for (i = 0; i < 8; i++) {
+        for (j = 3; j + 1; j--) {
+            var b = (hash[i]>>(j*8))&255;
+            result += ((b < 16) ? 0 : '') + b.toString(16);
+        }
+    }
+    return result;
+};
+
+function shutdownLab() {
+    for (var ip in ips[dropdownValue.Value()]) {
+        ip=ips[dropdownValue.Value()][ip]
+        fetch("http://"+ip+":7777/execute_command?key="+password.Value()+"&command=shutdown now")
+    }
+}
+
+function wakeLab() {
+    for (var ip in ips[dropdownValue.Value()]) {
+        ip=ips[dropdownValue.Value()][ip]
+        try {
+            fetch("http://"+ip+":7777"+"/mouse_mode?key="+password.Value()+"&type=up").then(()=>{
+                fetch("http://"+ip+":7777"+"/mouse_mode?key="+password.Value()+"&type=down").then(async ()=>{
+                    await new Promise(r => setTimeout(r, 5000))
+                    fetch("http://"+ip+":7777"+"/mouse_mode?key="+password.Value()+"&type=up").then(()=>{
+                        fetch("http://"+ip+":7777"+"/mouse_mode?key="+password.Value()+"&type=down")
+                    })
+                })
+            })
+        } catch {
+
+        }
+    }
 }
 
 </script>
@@ -118,8 +238,10 @@
                             <rect width="39.158" height="23.283" x="5.821" y="13.758" rx="1.468" ry="1.397" style="display:inline;fill:none;fill-opacity:1;stroke:#fff;stroke-width:3.175;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:5;stroke-dasharray:none;stroke-opacity:1"></rect>
                         </svg>
                     </div>
-
-                    <div class="flex gap-1 justify-center items-center {powerActiveValue} p-2 rounded-lg transition" onclick="powerActive.setValue(!powerActive.Value())">
+                    <div class="flex gap-1 justify-center items-center p-2 rounded-lg transition cursor-pointer" onclick="wakeLab()">
+                        🫨
+                    </div>
+                    <div class="flex gap-1 justify-center items-center p-2 rounded-lg transition" onclick="shutdownLab()">
                         <svg width="24px" height="24px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M12 3V12M18.3611 5.64001C19.6195 6.8988 20.4764 8.50246 20.8234 10.2482C21.1704 11.994 20.992 13.8034 20.3107 15.4478C19.6295 17.0921 18.4759 18.4976 16.9959 19.4864C15.5159 20.4752 13.776 21.0029 11.9961 21.0029C10.2162 21.0029 8.47625 20.4752 6.99627 19.4864C5.51629 18.4976 4.36274 17.0921 3.68146 15.4478C3.00019 13.8034 2.82179 11.994 3.16882 10.2482C3.51584 8.50246 4.37272 6.8988 5.6311 5.64001" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
                         </svg>
@@ -133,7 +255,7 @@
                             </svg>
                         </button>
                         
-                        <if "dropdown.Value() == 'open'" dep:dropdown>
+                        <if "dropdown.Value() == 'open' && defaultLab==-1" dep:dropdown>
                             <div class="z-10 absolute top-10 bg-white rounded-lg shadow w-32">
                                 <div class="py-2 flex flex-col">
                                     <p onclick="dropdownValue.setValue(`1`);toggleDropdown()" class="text-black hover:bg-black/10 py-0.5 px-2 cursor-pointer">Lab 1</p>
@@ -200,14 +322,7 @@
 </body>
 <script>
     document.getElementById("loginbutton").addEventListener("click", async ()=>{
-        async function sha256(message) {
-            var msgBuffer = new TextEncoder().encode(message);
-            var hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
-            var hashArray = Array.from(new Uint8Array(hashBuffer));                
-            var hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-            return hashHex;
-        }
-        if ((await sha256(document.getElementById("password").value))==="41802b211091917c6d9c9cb1e70707766fa8febe2271b18a7eca404829c9a3f0") {
+        if ((sha256(document.getElementById("password").value))==="41802b211091917c6d9c9cb1e70707766fa8febe2271b18a7eca404829c9a3f0") {
             password.setValue(document.getElementById("password").value)
             overlay.setValue("home")
         }
