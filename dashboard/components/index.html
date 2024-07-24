@@ -9,10 +9,10 @@
 
 <script>
     const urlParams = new URLSearchParams(window.location.search)
-    var defaultLab = urlParams.get("lab") == null ? 1 : Number(urlParams.get("lab"))
+    var defaultLab = urlParams.get("lab") == null ? -1 : Number(urlParams.get("lab"))
     var overlay = Signal("overlay", "login")
     var dropdown = Signal("dropdown", "close")
-    var dropdownValue = Signal("dropdownValue", String(defaultLab))
+    var dropdownValue = Signal("dropdownValue", defaultLab==-1 ? 1 : defaultLab)
     var controlsActive = Signal("controlsActive", false)
     var password = Signal("password", undefined)
 
